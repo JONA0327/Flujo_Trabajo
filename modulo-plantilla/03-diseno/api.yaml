@@ -1,0 +1,65 @@
+# Contrato de API del módulo [Mxx]. Se congela antes de programar.
+# Cualquier cambio posterior requiere solicitud de cambio (CHG-###).
+openapi: 3.0.3
+info:
+  title: "[Mxx] [Nombre del módulo]"
+  version: "1.0.0"
+  description: "Línea base v1.0. Requerimientos: [MOD]-RF-001..."
+servers:
+  - url: https://staging.[dominio]/api/v1
+paths:
+  /[recurso]:
+    get:
+      summary: Listar [recurso]
+      operationId: list[Recurso]
+      tags: ["[Mxx]"]
+      x-requerimientos: ["[MOD]-RF-001"]   # trazabilidad
+      parameters:
+        - { name: page, in: query, schema: { type: integer, default: 1 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array, items: { $ref: "#/components/schemas/Recurso" } }
+                  meta: { type: object }
+        "401": { $ref: "#/components/responses/Error" }
+    post:
+      summary: Crear [recurso]
+      operationId: create[Recurso]
+      tags: ["[Mxx]"]
+      x-requerimientos: ["[MOD]-RF-002"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RecursoInput" }
+      responses:
+        "201": { description: Creado }
+        "422": { $ref: "#/components/responses/Error" }
+components:
+  schemas:
+    Recurso:
+      type: object
+      properties:
+        id: { type: integer }
+    RecursoInput:
+      type: object
+      properties: {}
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code: { type: string }
+                  message: { type: string }
+                  details: { type: array, items: { type: object } }
